@@ -1,21 +1,21 @@
-FreeBSD Source:
+VBSD Source:
 ---------------
-This is the top level of the FreeBSD source directory.
+This is the top level of the VBSD source directory.
 
-FreeBSD is an operating system used to power modern servers, desktops, and embedded platforms.
+VBSD is an operating system used to power modern servers, desktops, and embedded platforms.
 A large community has continually developed it for more than thirty years.
-Its advanced networking, security, and storage features have made FreeBSD the platform of choice for many of the busiest web sites and most pervasive embedded networking and storage devices.
+Its advanced networking, security, and storage features have made VBSD the platform of choice for many of the busiest web sites and most pervasive embedded networking and storage devices.
 
 For copyright information, please see [the file COPYRIGHT](COPYRIGHT) in this directory.
 Additional copyright information also exists for some sources in this tree - please see the specific source directories for more information.
 
-The Makefile in this directory supports a number of targets for building components (or all) of the FreeBSD source tree.
-See build(7), config(8), [FreeBSD handbook on building userland](https://docs.freebsd.org/en/books/handbook/cutting-edge/#makeworld), and [Handbook for kernels](https://docs.freebsd.org/en/books/handbook/kernelconfig/) for more information, including setting make(1) variables.
+The Makefile in this directory supports a number of targets for building components (or all) of the VBSD source tree.
+See build(7), config(8), [VBSD handbook on building userland](https://docs.VBSD.org/en/books/handbook/cutting-edge/#makeworld), and [Handbook for kernels](https://docs.VBSD.org/en/books/handbook/kernelconfig/) for more information, including setting make(1) variables.
 
-For information on the CPU architectures and platforms supported by FreeBSD, see the [FreeBSD
-website's Platforms page](https://www.freebsd.org/platforms/).
+For information on the CPU architectures and platforms supported by VBSD, see the [VBSD
+website's Platforms page](https://www.VBSD.org/platforms/).
 
-For official FreeBSD bootable images, see the [release page](https://download.freebsd.org/ftp/releases/ISO-IMAGES/).
+For official VBSD bootable images, see the [release page](https://download.VBSD.org/ftp/releases/ISO-IMAGES/).
 
 Source Roadmap:
 ---------------
@@ -44,4 +44,4 @@ Source Roadmap:
 | usr.bin | User commands. |
 | usr.sbin | System administration commands. |
 
-For information on synchronizing your source tree with one or more of the FreeBSD Project's development branches, please see [FreeBSD Handbook](https://docs.freebsd.org/en/books/handbook/cutting-edge/#current-stable).
+For information on synchronizing your source tree with one or more of the VBSD Project's development branches, please see [VBSD Handbook](https://docs.VBSD.org/en/books/handbook/cutting-edge/#current-stable).
