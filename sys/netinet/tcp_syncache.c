@@ -35,7 +35,6 @@
 #include "opt_inet.h"
 #include "opt_inet6.h"
 #include "opt_ipsec.h"
-#include "opt_rss.h"
 
 #include <sys/param.h>
 #include <sys/systm.h>
@@ -773,12 +772,21 @@ syncache_socket(struct syncache *sc, struct socket *lso, struct mbuf *m)
 	NET_EPOCH_ASSERT();
 
 	/*
-	 * Ok, create the full blown connection, and set things up
-	 * as they would have been set up if we had created the
-	 * connection when the SYN arrived.
+	 * Creation of a socket via solisten_clone() bypasses call to pr_attach.
+	 * That's why there is some pasted code from soattach() and from
+	 * tcp_usr_attach() here.  This should improve once TCP is PR_SOCKBUF.
 	 */
 	if ((so = solisten_clone(lso)) == NULL)
 		goto allocfail;
+	mtx_init(&so->so_snd_mtx, "so_snd", NULL, MTX_DEF);
+	mtx_init(&so->so_rcv_mtx, "so_rcv", NULL, MTX_DEF);
+	so->so_snd.sb_mtx = &so->so_snd_mtx;
+	so->so_rcv.sb_mtx = &so->so_rcv_mtx;
+	error = soreserve(so, lso->sol_sbsnd_hiwat, lso->sol_sbrcv_hiwat);
+	if (error) {
+		sodealloc(so);
+		goto allocfail;
+	}
 #ifdef MAC
 	mac_socketpeer_set_from_mbuf(m, so);
 #endif
@@ -882,7 +890,6 @@ syncache_socket(struct syncache *sc, struct socket *lso, struct mbuf *m)
 	if (sc->sc_flowtype != M_HASHTYPE_NONE) {
 		inp->inp_flowid = sc->sc_flowid;
 		inp->inp_flowtype = sc->sc_flowtype;
-#ifdef	RSS
 	} else {
 		  /* assign flowid by software RSS hash */
 #ifdef INET6
@@ -897,6 +904,7 @@ syncache_socket(struct syncache *sc, struct socket *lso, struct mbuf *m)
 		  } else
 #endif	/* INET6 */
 		  {
+#ifdef INET
 			rss_proto_software_hash_v4(inp->inp_faddr,
 						   inp->inp_laddr,
 						   inp->inp_fport,
@@ -904,8 +912,8 @@ syncache_socket(struct syncache *sc, struct socket *lso, struct mbuf *m)
 						   IPPROTO_TCP,
 						   &inp->inp_flowid,
 						   &inp->inp_flowtype);
+#endif /* INET */
 		  }
-#endif	/* RSS */
 	}
 #ifdef NUMA
 	inp->inp_numa_domain = sc->sc_numa_domain;
@@ -1165,7 +1173,7 @@ syncache_expand(struct in_conninfo *inc, struct tcpopt *to, struct tcphdr *th,
 			return (-1); /* Do not send RST */
 		}
 #endif /* TCP_SIGNATURE */
-		if (m != NULL && M_HASHTYPE_GET(m) != M_HASHTYPE_NONE) {
+		if (m != NULL && M_HASHTYPE_ISHASH_TCP(m)) {
 			sc->sc_flowid = m->m_pkthdr.flowid;
 			sc->sc_flowtype = M_HASHTYPE_GET(m);
 		}
@@ -1763,7 +1771,7 @@ syncache_add(struct in_conninfo *inc, struct tcpopt *to, struct tcphdr *th,
 		sc->sc_flowlabel = htonl(sc->sc_flowlabel) & IPV6_FLOWLABEL_MASK;
 	}
 #endif
-	if (m != NULL && M_HASHTYPE_GET(m) != M_HASHTYPE_NONE) {
+	if (m != NULL && M_HASHTYPE_ISHASH_TCP(m)) {
 		sc->sc_flowid = m->m_pkthdr.flowid;
 		sc->sc_flowtype = M_HASHTYPE_GET(m);
 	}

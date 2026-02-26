@@ -581,30 +581,14 @@ chn_read(struct pcm_channel *c, struct uio *buf)
 }
 
 void
-chn_intr_locked(struct pcm_channel *c)
+chn_intr(struct pcm_channel *c)
 {
-
-	CHN_LOCKASSERT(c);
-
+	CHN_LOCK(c);
 	c->interrupts++;
-
 	if (c->direction == PCMDIR_PLAY)
 		chn_wrintr(c);
 	else
 		chn_rdintr(c);
-}
-
-void
-chn_intr(struct pcm_channel *c)
-{
-
-	if (CHN_LOCKOWNED(c)) {
-		chn_intr_locked(c);
-		return;
-	}
-
-	CHN_LOCK(c);
-	chn_intr_locked(c);
 	CHN_UNLOCK(c);
 }
 
@@ -2108,8 +2092,22 @@ chn_setspeed(struct pcm_channel *c, uint32_t speed)
 int
 chn_setformat(struct pcm_channel *c, uint32_t format)
 {
-	uint32_t oldformat, oldspeed;
+	uint32_t oldformat, oldspeed, x;
 	int ret;
+
+	/*
+	 * Detect unsupported formats. This checks if the format is supported
+	 * in the first place, and that no more than 1 format is specified at
+	 * the same time.
+	 */
+	x = format & AFMT_CONVERTIBLE;
+	if ((x & (x - 1)) != 0) {
+		if (snd_verbose > 3) {
+			device_printf(c->dev, "%s(): Unsupported format: "
+			    "0x%08x\n", __func__, format);
+		}
+		return (EINVAL);
+	}
 
 	/* XXX force stereo */
 	if ((format & AFMT_PASSTHROUGH) && AFMT_CHANNEL(format) < 2) {

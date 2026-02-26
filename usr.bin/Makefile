@@ -6,7 +6,6 @@ SUBDIR=	apply \
 	backlight \
 	banner \
 	basename \
-	beep \
 	bintrans \
 	brandelf \
 	bsdcat \
@@ -86,7 +85,6 @@ SUBDIR=	apply \
 	mandoc \
 	mdo \
 	mesg \
-	mididump \
 	ministat \
 	mkdep \
 	mkfifo \
@@ -208,9 +206,7 @@ SUBDIR.${MK_GAMES}+=	pom
 SUBDIR.${MK_GAMES}+=	primes
 SUBDIR.${MK_GAMES}+=	random
 SUBDIR+=		gh-bc
-.if ${MK_GNU_DIFF} == "no"
 SUBDIR+=		diff3
-.endif
 SUBDIR.${MK_HESIOD}+=	hesinfo
 SUBDIR.${MK_ICONV}+=	iconv
 SUBDIR.${MK_ICONV}+=	mkcsmapper
@@ -240,6 +236,8 @@ SUBDIR.${MK_NIS}+=	ypwhich
 SUBDIR.${MK_OPENSSH}+=	ssh-copy-id
 SUBDIR.${MK_QUOTAS}+=	quota
 SUBDIR.${MK_SENDMAIL}+=	vacation
+SUBDIR.${MK_SOUND}+=	beep
+SUBDIR.${MK_SOUND}+=	mididump
 SUBDIR.${MK_TALK}+=	talk
 SUBDIR.${MK_TELNET}+=	telnet
 SUBDIR.${MK_TESTS_SUPPORT}+=	kyua

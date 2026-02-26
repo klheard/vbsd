@@ -1009,8 +1009,7 @@ cmi_attach(device_t dev)
 	if (sc->reg)
 		bus_release_resource(dev, SYS_RES_IOPORT, sc->regid, sc->reg);
 	mtx_destroy(&sc->lock);
-	if (sc)
-		free(sc, M_DEVBUF);
+	free(sc, M_DEVBUF);
 
 	return ENXIO;
 }
@@ -1096,7 +1095,7 @@ static device_method_t cmi_methods[] = {
 	DEVMETHOD(device_detach,        cmi_detach),
 	DEVMETHOD(device_resume,        cmi_resume),
 	DEVMETHOD(device_suspend,       cmi_suspend),
-	{ 0, 0 }
+	DEVMETHOD_END
 };
 
 static driver_t cmi_driver = {

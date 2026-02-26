@@ -278,8 +278,6 @@ struct ufshci_device {
 	struct ufshci_device_descriptor dev_desc;
 	struct ufshci_geometry_descriptor geo_desc;
 
-	uint32_t unipro_version;
-
 	/* WriteBooster */
 	bool is_wb_enabled;
 	bool is_wb_flush_enabled;
@@ -398,7 +396,6 @@ struct ufshci_controller {
 
 	/* UFS Interconnect Layer (UIC) */
 	struct mtx uic_cmd_lock;
-	uint32_t unipro_version;
 	uint8_t hs_gear;
 	uint32_t tx_lanes;
 	uint32_t rx_lanes;
@@ -451,9 +448,7 @@ void ufshci_ctrlr_poll(struct ufshci_controller *ctrlr);
 
 int ufshci_ctrlr_submit_task_mgmt_request(struct ufshci_controller *ctrlr,
     struct ufshci_request *req);
-int ufshci_ctrlr_submit_admin_request(struct ufshci_controller *ctrlr,
-    struct ufshci_request *req);
-int ufshci_ctrlr_submit_io_request(struct ufshci_controller *ctrlr,
+int ufshci_ctrlr_submit_transfer_request(struct ufshci_controller *ctrlr,
     struct ufshci_request *req);
 int ufshci_ctrlr_send_nop(struct ufshci_controller *ctrlr);
 
@@ -499,9 +494,9 @@ int ufshci_utmr_req_queue_enable(struct ufshci_controller *ctrlr);
 void ufshci_utr_req_queue_disable(struct ufshci_controller *ctrlr);
 int ufshci_utr_req_queue_enable(struct ufshci_controller *ctrlr);
 void ufshci_req_queue_fail(struct ufshci_controller *ctrlr,
-    struct ufshci_hw_queue *hwq);
+    struct ufshci_req_queue *req_queue);
 int ufshci_req_queue_submit_request(struct ufshci_req_queue *req_queue,
-    struct ufshci_request *req, bool is_admin);
+    struct ufshci_request *req);
 void ufshci_req_queue_complete_tracker(struct ufshci_tracker *tr);
 
 /* Request Single Doorbell Queue */

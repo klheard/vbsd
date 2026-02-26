@@ -350,7 +350,7 @@ cs4281chan_setblocksize(kobj_t obj, void *data, u_int32_t blocksize)
 
     /* 2 interrupts are possible and used in buffer (half-empty,empty),
      * hence factor of 2. */
-    ch->blksz = MIN(blocksize, sc->bufsz / 2);
+    ch->blksz = min(blocksize, sc->bufsz / 2);
     sndbuf_resize(ch->buffer, 2, ch->blksz);
     ch->dma_setup = 0;
     adcdac_prog(ch);
@@ -954,7 +954,7 @@ static device_method_t cs4281_methods[] = {
     DEVMETHOD(device_detach,		cs4281_pci_detach),
     DEVMETHOD(device_suspend,		cs4281_pci_suspend),
     DEVMETHOD(device_resume,		cs4281_pci_resume),
-    { 0, 0 }
+    DEVMETHOD_END
 };
 
 static driver_t cs4281_driver = {

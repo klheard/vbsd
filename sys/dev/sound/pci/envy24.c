@@ -1611,10 +1611,8 @@ envy24chan_free(kobj_t obj, void *data)
 	device_printf(sc->dev, "envy24chan_free()\n");
 #endif
 	mtx_lock(&sc->lock);
-	if (ch->data != NULL) {
-		free(ch->data, M_ENVY24);
-		ch->data = NULL;
-	}
+	free(ch->data, M_ENVY24);
+	ch->data = NULL;
 	mtx_unlock(&sc->lock);
 
 	return 0;
@@ -2675,7 +2673,7 @@ static device_method_t envy24_methods[] = {
 	DEVMETHOD(device_probe,		envy24_pci_probe),
 	DEVMETHOD(device_attach,	envy24_pci_attach),
 	DEVMETHOD(device_detach,	envy24_pci_detach),
-	{ 0, 0 }
+	DEVMETHOD_END
 };
 
 static driver_t envy24_driver = {
